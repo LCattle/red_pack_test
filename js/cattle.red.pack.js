@@ -18,6 +18,10 @@
                 width : this.options.winW,
                 height : this.options.winH
             });
+            $('.red-pack-pup').css({
+                width : this.options.winW,
+                height : this.options.winH
+            });
             this.loadRedPack(this.options.ele);
         },
 
@@ -27,11 +31,25 @@
          */
         loadRedPack : function(ele){
             var self = this;
-            var k = 100;
+            var k = 50;
             var redPackHtml = '';
             var ran = '';
             var redPackDown = '';
-            for(var i = 0; i < k; i++){
+            /*for(var i = 0; i < k; i++){
+             ran = self.countRandom(3)
+             console.log(ran);
+             redPackHtml = '<div class="box-item '+ self.options.downPositions[ran] +'" data-rp-id = "'+ i +'"></div>';
+             $(ele).append(redPackHtml);
+             redPackDown = $('div[data-rp-id="'+ i +'"]');
+             //为每个红包设定大小
+             self.setPackSize(redPackDown);
+             //为每个红包设定margin-top值
+             self.packMarginTop(redPackDown);
+                self.start(redPackDown);
+             }*/
+            var i = 0;
+            var loadRedPackTime = window.setInterval(function(){
+                i++;
                 ran = self.countRandom(3)
                 console.log(ran);
                 redPackHtml = '<div class="box-item '+ self.options.downPositions[ran] +'" data-rp-id = "'+ i +'"></div>';
@@ -39,29 +57,32 @@
                 redPackDown = $('div[data-rp-id="'+ i +'"]');
                 //为每个红包设定大小
                 self.setPackSize(redPackDown);
-                //为每个红包设定margin-top值
+                //为每个红包设定top值
                 self.packMarginTop(redPackDown);
-            }
+                self.start(redPackDown);
+            }, 900);
 
-            self.start(ele);
+
+
+
         },
         /**
          * 为每个红包设定大小
          * @param ele
          */
         setPackSize: function(ele){
-           if($(ele).hasClass('item-left') || $(ele).hasClass('item-right')){
+            if($(ele).hasClass('item-left') || $(ele).hasClass('item-right')){
                 $(ele).addClass('box-item-small');
-           }
+            }
         },
         /**
          * 为每个红包设定margin-top值
          * @param ele
          */
         packMarginTop: function(ele){
-            $(ele).width();
             var itemH =  $(ele).outerHeight(true);
-            $(ele).css('margin-top', '-' + itemH + 'px' );
+           //$(ele).css('top', '-' + itemH + 'px' );
+            $(ele).css('transform', 'translate3d(300px, '+ itemH +'px, 0px) rotate(40deg)');
         },
         /**
          * 执行落下动作
@@ -73,13 +94,26 @@
                 var rpNumber = 100;
                 var y = 0;
                 var x = 500;
-                window.setInterval(function(){
-                    y++;
-                    x = x - 0.4;
-                    $(ele).children('.box-item').css({
-                        transform: 'translate3d('+ x +'px, '+ y +'px, 0px) rotate(40deg)'
+                var hei =  $(window).height()/* - $(ele).outerHeight(true)*/;
+                /*if(!$(ele).is(':animated')) {
+                    $(ele).stop().animate({
+                        'top': hei + 'px',
+                        'transform':'rotate(-=40deg)'
+                    }, 4000, function(){
+                        $(ele).remove();
                     });
-                }, 1);
+
+                }*/
+                var deg = 40;
+                timer = window.setInterval(function(){
+                    //红包的度数变化
+                    //红包落下来
+                    //有的红包逐渐消失,有的会倾斜，有的大，有的小
+                    deg = deg + 0.5;
+                    $(ele).css({
+                        'transform': 'translate3d(300px, '+ hei +'px, 0px) rotate('+ deg +'deg)'
+                    })
+                }, 100);
             }
         },
 
@@ -90,7 +124,7 @@
          * @returns {number}
          */
         countRandom: function(n){
-                return parseInt(Math.floor(n * Math.random()));
+            return parseInt(Math.floor(n * Math.random()));
         }
     }
 
