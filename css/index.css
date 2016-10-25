@@ -8,6 +8,7 @@
     height: 100%;
     background: greenyellow;
     position: relative;
+    overflow: hidden;
 }
 .box-item{
     position: absolute;
@@ -16,14 +17,55 @@
     height: 200px;
     left: 0px;
     background: green;
-    -webkit-transform: translate3d(150px, 50px, 0px) rotate(40deg);
+    /*-webkit-transform: translate3d(150px, 50px, 0px) rotate(40deg);
     -moz-transform: translate3d(150px, 50px, 0px) rotate(40deg);
     -ms-transform: translate3d(150px, 50px, 0px) rotate(40deg);
     -o-transform: translate3d(150px, 50px, 0px) rotate(40deg);
-    transform: translate3d(150px, 50px, 0px) rotate(40deg);
+    transform: translate3d(150px, 50px, 0px) rotate(40deg);*/
 
 }
+.item-left{
+    position: absolute;
+    top: 0px;
+    width: 100px;
+    height: 200px;
+    left: 0px;
+    background: green;
+    -webkit-transform:  rotate(40deg);
+    -moz-transform: rotate(40deg);
+    -ms-transform: rotate(40deg);
+    -o-transform: rotate(40deg);
+    transform: rotate(40deg);
 
+}
+.item-right{
+    position: absolute;
+    top: 0px;
+    width: 100px;
+    height: 200px;
+    left: 0px;
+    background: green;
+    -webkit-transform: rotate(-40deg);
+    -moz-transform: rotate(-40deg);
+    -ms-transform: rotate(-40deg);
+    -o-transform: rotate(-40deg);
+    transform: rotate(-40deg);
+
+}
+.item-center{
+    position: absolute;
+    top: 0px;
+    width: 100px;
+    height: 200px;
+    left: 0px;
+    background: green;
+    -webkit-transform: rotate(40deg);
+    -moz-transform: rotate(40deg);
+    -ms-transform: rotate(40deg);
+    -o-transform: rotate(40deg);
+    transform: rotate(40deg);
+
+}
 .box-item-small{
     width: 50px;
     height: 80px;
