@@ -10,7 +10,10 @@
                 winW : $(window).width(),
                 winH : $(window).height(),
                 downPositions :['item-left', 'item-right', 'item-center'],
-                packTypes: ['big', 'small']
+                packTypes: ['big', 'secondary', 'small'],
+                itemPositions: [30, 50, 80, 110],
+                translateX: 0,
+                deg: 0
             }
 
             this.options = $.extend({}, this.defaults, options);
@@ -35,23 +38,10 @@
             var redPackHtml = '';
             var ran = '';
             var redPackDown = '';
-            /*for(var i = 0; i < k; i++){
-             ran = self.countRandom(3)
-             console.log(ran);
-             redPackHtml = '<div class="box-item '+ self.options.downPositions[ran] +'" data-rp-id = "'+ i +'"></div>';
-             $(ele).append(redPackHtml);
-             redPackDown = $('div[data-rp-id="'+ i +'"]');
-             //为每个红包设定大小
-             self.setPackSize(redPackDown);
-             //为每个红包设定margin-top值
-             self.packMarginTop(redPackDown);
-                self.start(redPackDown);
-             }*/
             var i = 0;
             var loadRedPackTime = window.setInterval(function(){
                 i++;
                 ran = self.countRandom(3)
-                console.log(ran);
                 redPackHtml = '<div class="box-item '+ self.options.downPositions[ran] +'" data-rp-id = "'+ i +'"></div>';
                 $(ele).append(redPackHtml);
                 redPackDown = $('div[data-rp-id="'+ i +'"]');
@@ -60,7 +50,8 @@
                 //为每个红包设定top值
                 self.packMarginTop(redPackDown);
                 self.start(redPackDown);
-            }, 900);
+                //clearInterval(loadRedPackTime)
+            }, 500);
 
 
 
@@ -76,13 +67,29 @@
             }
         },
         /**
-         * 为每个红包设定margin-top值
+         * 为每个红包设定偏移值
          * @param ele
          */
         packMarginTop: function(ele){
-            var itemH =  $(ele).outerHeight(true);
-           //$(ele).css('top', '-' + itemH + 'px' );
-            $(ele).css('transform', 'translate3d(300px, '+ itemH +'px, 0px) rotate(40deg)');
+            var self = this;
+            var _t = $(ele);
+            var itemH =  _t.outerHeight(true);
+            var itemW = _t.outerHeight(true)
+            var random = self.countRandom(3);
+            var autoCenter = (self.options.winW - itemW) /2;
+            self.options.translateX = (autoCenter * random)
+            if(_t.hasClass('item-left')){
+                self.options.deg = -40;
+            }
+            if(_t.hasClass('item-right')){
+                self.options.deg = 40;
+
+            }
+            if(_t.hasClass('item-center')){
+                self.options.deg = 20;
+            }
+            _t.css('transform', 'translate3d('+ self.options.translateX +'px, -'+ (itemH + 50) +'px, 0px) rotate('+ self.options.deg +'deg)');
+
         },
         /**
          * 执行落下动作
@@ -91,29 +98,39 @@
         start: function(ele){
             var self = this;
             if(self.options.switch){
-                var rpNumber = 100;
-                var y = 0;
-                var x = 500;
-                var hei =  $(window).height()/* - $(ele).outerHeight(true)*/;
-                /*if(!$(ele).is(':animated')) {
-                    $(ele).stop().animate({
-                        'top': hei + 'px',
-                        'transform':'rotate(-=40deg)'
-                    }, 4000, function(){
-                        $(ele).remove();
-                    });
-
-                }*/
+                var _t = $(ele);
+                var hei =  $(window).height() + _t.outerHeight(true);
                 var deg = 40;
-                timer = window.setInterval(function(){
+                var boxItemW = _t.width();
+                var autoW = (self.options.winW - boxItemW) / 2;
+                var random = self.countRandom(5);
+                var y = -200;
+                var x = (autoW + self.options.itemPositions[random]);
+                var timer = window.setInterval(function(){
                     //红包的度数变化
                     //红包落下来
                     //有的红包逐渐消失,有的会倾斜，有的大，有的小
-                    deg = deg + 0.5;
-                    $(ele).css({
-                        'transform': 'translate3d(300px, '+ hei +'px, 0px) rotate('+ deg +'deg)'
-                    })
-                }, 100);
+                    var translate = _t.css('transform');
+                    //var translateY = translate.substring(translate.lastIndexOf(',')+1, translate.indexOf(')'));
+                    if(_t.hasClass('item-left')){
+                        deg = 40;
+                        deg = deg + 0.1;
+                        x = x - 0.5;
+                    }
+                    if(_t.hasClass('item-right')){
+                        deg = 300;
+                        deg = deg - 0.1;
+                        x = x + 0.5;
+                    }
+                    y = y + 3;
+                    if(y < self.options.winH){
+                        _t.css({
+                            'transform': 'translate3d('+ x +'px, '+ y +'px, 0px) rotate('+ deg +'deg)'
+                        })
+                    }else{
+                        _t.remove();
+                    }
+                }, 1);
             }
         },
 
