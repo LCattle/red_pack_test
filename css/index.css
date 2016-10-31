@@ -23,47 +23,10 @@
 .box-item{
     position: absolute;
     top: 0px;
-    width: 150px;
-    height: 220px;
     left: 0px;
-    background: url(../images/red_pack_not2.png) no-repeat 100%;
-    -webkit-background-size: 100%
-    background-size: 100%;
     cursor: pointer;
-   /* -webkit-transform: translate3d(100px, -300px, 0px);
-    -moz-transform: translate3d(100, -300px, 0px);
-    -ms-transform: translate3d(100px, -300px, 0px);
-    -o-transform: translate3d(100px, -300px, 0px);
-    transform: translate3d(100px, -300px, 0px);*/
-
+    
 }
-
-/*红包效果
-  1.向左，向右，中间
-  2.倾斜
-  3.逐渐消失
-  4.由远到近
-  5.边界删除
-*/
-/*.item-left{
-
-    -webkit-transform: translate3d(100px, -300px, 0px) rotate(40deg);
-    -moz-transform: translate3d(100, -300px, 0px) rotate(40deg);
-    -ms-transform: translate3d(100px, -300px, 0px) rotate(40deg);
-    -o-transform: translate3d(100px, -300px, 0px) rotate(40deg);
-    transform: translate3d(100px, -300px, 0px) rotate(40deg);
-}
-.item-right{
-    -webkit-transform: translate3d(100px, -300px, 0px) rotate(-40deg);
-    -moz-transform: translate3d(100, -300px, 0px) rotate(-40deg);
-    -ms-transform: translate3d(100px, -300px, 0px) rotate(-40deg);
-    -o-transform: translate3d(100px, -300px, 0px) rotate(-40deg);
-    transform: translate3d(100px, -300px, 0px) rotate(-40deg);
-}*/
-.item-center{
-
-}
-
 
 .box-item-small{
     width: 80px;
@@ -71,4 +34,11 @@
     background: url(../images/red_pack_not3.png) no-repeat 100%;
     -webkit-background-size: 100%
 	background-size: 100%;
+}
+.box-item-big{
+    width: 150px;
+    height: 220px;
+    background: url(../images/red_pack_not2.png) no-repeat 100%;
+    -webkit-background-size: 100%
+background-size: 100%;
 }
