@@ -6,7 +6,7 @@
         init: function (options) {
             this.defaults = {
                 ele: '.red-pack-box', //红包的box
-                domSwitch: true,    //是否开始加载红包
+                dom_switch: true,    //是否开始加载红包
                 winW: $(window).width(),   //浏览器宽度
                 winH: $(window).height(), //浏览器高度
                 red_pack_types: ['box-item-big', 'box-item-small'], //红包大小
@@ -16,15 +16,19 @@
                 animation_time: 2000    //红包执行落下完成的时间
             }
             this.options = $.extend({}, this.defaults, options);
-            $(this.options.ele).css({
-                width: this.options.winW,
-                height: this.options.winH
-            });
-            $('.red-pack-pup').css({
-                width: this.options.winW,
-                height: this.options.winH
-            });
-            this.loadRedPack(this.options.ele);
+            if(this.options.dom_switch){
+                this.loadRedPack(this.options.ele);
+                this.initPupHtml();
+                $(this.options.ele).css({
+                    width: this.options.winW,
+                    height: this.options.winH
+                });
+                $('.red-pack-pup').css({
+                    width: this.options.winW,
+                    height: this.options.winH
+                });
+            }
+
         },
         /**
          * 加载红包HTML
@@ -32,15 +36,15 @@
          */
         loadRedPack: function (ele) {
             var self = this;
-            if (self.options.domSwitch) {
+            if (self.options.dom_switch) {
                 var redPackHtml = '';
-                var ran = '';
+                var r = '';
                 var redPackDown = '';
                 var i = 0;
                 var loadRedPackTime = window.setInterval(function () {
                     i++;
-                    ran = self.countRandom(2)
-                    redPackHtml = '<div class="box-item ' + self.options.red_pack_types[ran] + '" data-rp-id = "' + i + '"></div>';
+                    r = self.countRandom(2)
+                    redPackHtml = '<div class="box-item ' + self.options.red_pack_types[r] + '" data-rp-id = "' + i + '"></div>';
                     $(ele).append(redPackHtml);
                     redPackDown = $('div[data-rp-id="' + i + '"]');
                     self.lotteryDraw(redPackDown);
@@ -99,6 +103,13 @@
             return parseInt(Math.floor(n * Math.random()));
         },
         initPupHtml: function () {
-        }
+            //红包落下来的背景
+            //红包打开时的背景
+            var self = this;
+            var red_pack_bg_pup = '<div class="red-pack-pup"></div>';
+            var red_pack_box = '<div class="red-pack-box"></div>';
+            $('body').append(red_pack_bg_pup);
+            $('body').append(red_pack_box);
+      }
     }
 })(window, document, jQuery);
