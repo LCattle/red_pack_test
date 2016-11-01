@@ -1,16 +1,15 @@
 /**
  * Created by cattle on 2016/10/18 0018.
  */
-CoolPadShop.Base.PanicBuy.option = {};
-CoolPadShop.Base.Vip.ShortLogin.init();
 (function (window, document, $) {
     $.fn._RP = {
         init: function (options) {
             this.defaults = {
                 ele: '.red-pack-box', //红包的box
+                red_pack_pup: '.red-pack-pup', //活动背景弹出层
                 open_red_pack_pup: '.open-red-pack-pup', //打开红包遮罩层
                 red_pack_content_pup: '.red-pack-content', //打开红包的遮罩层内容
-                activity_time: 120,
+                activity_time: 10,  //活动时长
                 dom_switch: true,    //是否开始加载红包
                 winW: $(window).width(),   //浏览器宽度
                 winH: $(window).height(), //浏览器高度
@@ -18,17 +17,14 @@ CoolPadShop.Base.Vip.ShortLogin.init();
                 red_pack_W: 0, //红包的宽度
                 red_pack_H: 0,  //红包的高度
                 load_red_pack_time: 200, //每个红包的间隔时间
-                animation_time: 2000,    //红包执行落下完成的时间,
-                open_pup_close_btn: '.close-pup',
-                red_pack_type: '.rp-box',
-                red_pack_price: '.rp-price',
-                hint_box: '.hint-box',
-                hint_box_close_btn: '.hint-close-btn',
-                hint_box_text: '.hint-text',
+                animation_time: 2000,    //红包执行落下完成的时间
+                open_pup_close_btn: '.close-pup',  //关闭打开红包的弹出层dom
+                red_pack_type: '.rp-box',   //红包的类型dom
+                red_pack_price: '.rp-price', //红包的金额dom,
+                click_red_pack:function(){} //红包点击事件
             }
             this.options = $.extend({}, this.defaults, options);
             if (this.options.dom_switch) {
-                console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
                 this.initPupHtml();
                 this.loadRedPack(this.options.ele);
                 this.autoCenterPup(this.options.red_pack_content_pup);
@@ -37,17 +33,16 @@ CoolPadShop.Base.Vip.ShortLogin.init();
                     width: this.options.winW,
                     height: this.options.winH
                 });
-                $('.red-pack-pup').css({
+                $(this.options.red_pack_pup).css({
                     width: this.options.winW,
                     height: this.options.winH
                 });
-                $('.open-red-pack-pup').css({
+                $(this.options.open_red_pack_pup).css({
                     width: this.options.winW,
                     height: this.options.winH
                 });
                 this.countDown(this.options.activity_time);
                 this.closePup(this.options.open_pup_close_btn);
-                this.closePup(this.options.hint_box_close_btn);
             }
         },
         /**
@@ -107,7 +102,7 @@ CoolPadShop.Base.Vip.ShortLogin.init();
             _t.stop(true, true).animate({
                 'top': (self.options.winH + self.options.red_pack_H)
             }, self.options.animation_time, function () {
-                _t.remove();
+                _t.remove().delay(_t);
             });
         },
         /**
@@ -116,70 +111,11 @@ CoolPadShop.Base.Vip.ShortLogin.init();
          */
         lotteryDraw: function (ele) {
             var self = this;
-            var localTionURL = window.location.href;
-            var loginState = CoolPadShop.Base.Vip.checkLogin();
             $(ele).unbind('click').on('click', function () {
                 var _t = $(ele);
-                if (!loginState) {
-                    gotoLogin(localTionURL);
-                    return;
-                }
                 _t.stop().remove().delay();
-                $.ajax({
-                    url: getPath('www') + "/coupons/couponsAction!redpacket.do?ver=" + Math.ceil(Math.random() * 9999),
-                    type: 'post',
-                    timeout: 10000,
-                    dataType: 'JSON',
-                    success: function (reslut) {
-                        if (reslut.msg === -1) {
-                            //alert('亲，活动还没开始！');
-                            self.setOpenRedPackPup(0, '亲，活动还没开始！', false);
-                        } else if (reslut.msg === -2) {
-                            gotoLogin(localTionURL);
-                        } else if (reslut.msg === -3) {
-                            //alert('亲，活动结束了!');
-                            self.setOpenRedPackPup(0, '亲，活动结束了!', false);
-                        } else if (reslut.msg === -4) {
-                            //alert('你已经参加过此活动，不能再参加了');
-                            self.setOpenRedPackPup(0, '你已经参加过此活动，不能再参加了~', false);
-                        } else if (reslut.msg === -5) {
-                            //alert('哎呀，好礼戳飞了，攒足运气再来吧~');
-                            self.setOpenRedPackPup(0, '哎呀，好礼戳飞了，攒足运气再来吧~', false);
-                        } else {
-                            if (reslut.level === 0) {
-                                // alert('哎呀，好礼戳飞了，攒足运气再来吧~');
-                                self.setOpenRedPackPup(0, '哎呀，好礼戳飞了，攒足运气再来吧~', false);
-                            } else {
-                                //现金红包
-                                //抵用券
-                                //现金券
-                                /* type :
-                                 cash_voucher  现金券
-                                 available_reduce 抵用券
-                                 redpacket 红包
-                                 */
-                                var reslutType = reslut.type || '';
-                                var reslutPrice = reslut.price || 0;
-                                var pupType = '';
-                                if (reslutType && reslutType === 'cash_voucher') {
-                                    //现金券 cash_voucher-box
-                                    pupType = 'cash_voucher-box';
-                                } else if (reslutType === 'available_reduce') {
-                                    //抵用券 available_reduce-box
-                                    pupType = 'available_reduce-box';
-                                } else if (reslutType === 'redpacket') {
-                                    //现金红包 redpacket-box
-                                    pupType = 'redpacket-box';
-                                }
-                                self.setOpenRedPackPup(reslutPrice, pupType, true);
-                            }
-                        }
-                    },
-                    error: function () {
-                        //alert('亲，开宝箱的人数太多了！');
-                        self.setOpenRedPackPup(0, '亲，开宝箱的人数太多了！', false);
-                    }
-                });
+                self.options.click_red_pack();
+
             });
         },
         /**
@@ -203,30 +139,20 @@ CoolPadShop.Base.Vip.ShortLogin.init();
                 '<div class="rp-box ">' +
                 '<span class="rp-price"></span>' +
                 '</div></div>';
-            var hintBoxHtml = '<div class="hint-box" style="display: none;">' +
-                '<div class="hint-content">' +
-                '<span class="hint-close-btn">x</span>' +
-                '<span class="hint-text"></span>' +
-                '</div></div>';
-            $('body').append(pupHTMl + red_pack_contentHtml + hintBoxHtml);
+            $('body').append(pupHTMl + red_pack_contentHtml);
         },
         /**
          * 点击红包之后弹出中奖层
          * @param price 红包金额
          * @param pupType 红包类型
          */
-        setOpenRedPackPup: function (price, pupType, flag) {
+        setOpenRedPackPup: function (price, pupType) {
             var self = this;
-            if (flag) {
-                $(self.options.red_pack_type).removeClass('cash_voucher-box available_reduce-box redpacket-box').addClass(pupType);
-                $(self.options.red_pack_price).html(price);
-                $(self.options.open_red_pack_pup).css('display', 'block');
-                $(self.options.red_pack_content_pup).css('display', 'block');
-            } else {
-                $(self.options.open_red_pack_pup).css('display', 'block');
-                $(self.options.hint_box_text).html(pupType);
-                $(self.options.hint_box).css('display', 'block');
-            }
+            $(self.options.red_pack_type).removeClass('cash_voucher-box available_reduce-box redpacket-box').addClass(pupType);
+            $(self.options.red_pack_price).html(price);
+            $(self.options.open_red_pack_pup).css('display', 'block');
+            $(self.options.red_pack_content_pup).css('display', 'block');
+
         },
         /**
          * 打开红包后弹出层居中
