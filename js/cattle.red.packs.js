@@ -9,19 +9,20 @@
                 red_pack_pup: '.red-pack-pup', //活动背景弹出层
                 open_red_pack_pup: '.open-red-pack-pup', //打开红包遮罩层
                 red_pack_content_pup: '.red-pack-content', //打开红包的遮罩层内容
-                activity_time: 10,  //活动时长
+                activity_time: 1000,  //活动时长
                 dom_switch: true,    //是否开始加载红包
                 winW: $(window).width(),   //浏览器宽度
                 winH: $(window).height(), //浏览器高度
                 red_pack_types: ['box-item-big', 'box-item-small'], //红包大小
                 red_pack_W: 0, //红包的宽度
                 red_pack_H: 0,  //红包的高度
-                load_red_pack_time: 200, //每个红包的间隔时间
+                load_red_pack_time: 300, //每个红包的间隔时间
                 animation_time: 2000,    //红包执行落下完成的时间
                 open_pup_close_btn: '.close-pup',  //关闭打开红包的弹出层dom
                 red_pack_type: '.rp-box',   //红包的类型dom
                 red_pack_price: '.rp-price', //红包的金额dom,
-                click_red_pack:function(){} //红包点击事件
+                click_red_pack:function(){}, //红包点击事件
+                red_pack_direction: ['pack-left', 'pack-right']
             }
             this.options = $.extend({}, this.defaults, options);
             if (this.options.dom_switch) {
@@ -55,12 +56,18 @@
             var r = '';
             var redPackDown = '';
             var i = 0;
+
             var loadRedPackTime = window.setInterval(function () {
                 //判断开关是否为开
                 if (self.options.dom_switch) {
                     i++;
+                    var f = 0;
                     r = self.countRandom(2)
-                    redPackHtml = '<div class="box-item ' + self.options.red_pack_types[r] + '" data-rp-id = "' + i + '"></div>';
+                    if(i % 2 == 0){
+                        f = 1;
+                    }
+                   // redPackHtml = '<div class="box-item ' + self.options.red_pack_types[r]   +' '+ self.options.red_pack_direction[f] +'" data-rp-id = "' + i + '"></div>';
+                    redPackHtml = '<div class="box-item ' + self.options.red_pack_types[r]   +' pack-left" data-rp-id = "' + i + '"></div>';
                     $(ele).append(redPackHtml);
                     redPackDown = $('div[data-rp-id="' + i + '"]');
                     self.packMarginTop(redPackDown);
@@ -99,11 +106,27 @@
             var self = this;
             var _t = $(ele);
             //如果当前没有进行动画，则添加
-            _t.stop(true, true).animate({
-                'top': (self.options.winH + self.options.red_pack_H)
+           /* _t.stop(true, true).animate({
+                //'top': (self.options.winH + self.options.red_pack_H)
+                transform: 'rotate(-40deg) translate3d(400px, 400px, 0px)'
             }, self.options.animation_time, function () {
                 _t.remove().delay(_t);
-            });
+            });*/
+            var h = 0;
+            var deg = 40;
+            var drawInterval = window.setInterval(function(){
+                h = h + 3;
+                if(_t.hasClass('pack-right')){
+                    deg = -40;
+                }
+                if(h >= self.options.winH){
+                    _t.remove();
+                    return;
+                }
+                _t.css({
+                    transform: 'rotate('+ deg +'deg) translate3d(400px, '+ h +'px, 0px)'
+                });
+            }, 0);
         },
         /**
          * 点击红包
